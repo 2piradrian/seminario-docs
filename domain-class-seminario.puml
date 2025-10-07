@@ -1,0 +1,126 @@
+@startuml entity-model
+left to right direction
+
+package entity {
+
+    enum Role {
+        USER
+        MODERATOR
+        ADMIN
+    }
+
+    enum Status {
+        ACTIVE
+        INACTIVE
+        DELETED
+        BANNED
+    }
+
+    class Category {
+        - String id
+        - String name
+    }
+
+    class PageType {
+        - String id
+        - String name
+    }
+
+    class Instrument {
+        - String id
+        - String name
+    }
+
+    class Style {
+        - String id
+        - String name
+    }
+
+    class Comment {
+        - String id
+        - User author
+        - Post post
+        - Comment? replyTo
+        - String content
+        - List<User> upvoters
+        - List<User> downvoters
+        - LocalDateTime createdAt
+        - LocalDateTime updatedAt
+        - Status status
+    }
+
+    class Post {
+        - String id
+        - String title
+        - String content
+        - Integer views
+        - String authorId
+        - Page? page
+        - String? imageId
+        - List<User> upvoters
+        - List<User> downvoters
+        - Category category
+        - LocalDateTime createdAt
+        - LocalDateTime updatedAt
+        - Status status
+    }
+
+    class User {
+        - String id
+        - String email
+        - String password
+        - Status status
+        - List<Role> roles
+    }
+
+    class UserProfile {
+        - String id
+        - String email
+        - String name
+        - String surname
+        - LocalDateTime memberSince
+        - String portraitImage
+        - String profileImage
+        - String shortDescription
+        - String longDescription
+        - List<Style> styles
+        - List<Instrument> instruments
+    }
+
+    class Page {
+        - String id
+        - String name
+        - String portraitImage
+        - String profileImage
+        - String shortDescription
+        - String longDescription
+        - User ownerId
+        - Status status
+        - PageType pageType
+        - List<User> members
+    }
+
+    Comment --> Post : postId
+    Comment --> Comment : replyTo
+    Comment --> Status
+    Comment --> User : authorId
+    Comment --> User : upvoters
+    Comment --> User : downvoters
+    Post --> Category : category
+    Post --> Status : status
+    Post --> User : authorId
+    Post --> Page : pageId
+    Post --> User : upvoters
+    Post --> User : downvoters
+    User --> Role : role
+    User --> Status : status
+    User --> UserProfile : userProfile
+    UserProfile --> Style :  styles
+    UserProfile --> Instrument :  instruments
+    Page --> User : members
+    Page --> User : owner
+    Page --> PageType : pageType
+    Page --> Status : status
+
+}
+@enduml
