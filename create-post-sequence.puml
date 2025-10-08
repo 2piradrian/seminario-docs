@@ -4,6 +4,7 @@ boundary "UI" as UI
 control "PostService" as C
 participant "UserRepository" as UR <<repository>>
 participant "PostRepository" as PTR <<repository>>
+participant "ImageRepository" as IR <<repository>>
 entity "actual:Sesion" as S
 entity "New:Post" as P
 
@@ -23,6 +24,8 @@ C --> P : new()
 C -> C: isPageOrProfile()
 C -> P: setPage()
 C -> P: setAuthor()
+C -> C: hasImage()
+C -> IR: upload() 
 C -> P: setImage()
 C -> P: setTitle()
 C -> P: setContent()
