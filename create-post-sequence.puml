@@ -1,0 +1,45 @@
+@startuml
+actor User
+boundary "UI" as UI
+control "PostService" as C
+participant "UserRepository" as UR <<repository>>
+participant "PostRepository" as PTR <<repository>>
+entity "Sesion" as S
+entity "New:Post" as P
+entity "Profile" as PR
+
+User -> UI : optionCreatePost()
+UI -> UI: showNewPostViewmodel()
+User -> UI: takeTitle()
+User -> UI: takeContent()
+UI -> UI: regexValidateFields()
+User -> UI: takeImage()
+UI -> UI: covertImageToBase64()
+UI -> UI: getSesion()
+UI -> S: getSesion()
+UI -> C: createPost()
+C -> UR: authUser() 
+create P
+C --> P : new()
+C -> C: isPageOrProfile()
+C -> P: setPage()
+C -> P: setAuthor()
+C -> P: setImage()
+C -> P: setTitle()
+C -> P: setContent()
+C -> P: setStatus()
+C -> P: setViews()
+C -> P: setUpVoters()
+C -> P: setDownVoters()
+C -> C : getPostDate()
+C -> P: setCreatedAt()
+C -> P: setUpdatedAt()
+C -> PTR: save()
+C -> C: createPostResponse()
+C -> UI: createPostResponse()
+UI -> UI: displaySuscess()
+UI -> UI: navigatePostDetail()
+C -> C : endUS()
+
+hide footbox
+@enduml
