@@ -25,22 +25,22 @@ UI -> RS: searchContent()
 RS -> UR: authUser()
 RS -> CR: getContentById()
 RS -> RS: setEmptyLists()
-alt "Paginas"
+alt ContentType = Paginas
     RS -> PPR: getPageFilteredPage()
     RS -> RS: setPageList()
     RS -> RS: createSearchResponse()
     RS -> UI: createSearchResponse()
-else "Usuarios"
+else ContentType = Usuarios
     RS -> UPR: getUserFilteredPage()
     RS -> RS: setUserList()
     RS -> RS: createSearchResponse()
     RS -> UI: createSearchResponse()
-else "Post"
+else ContentType = Post
     RS -> PPR: getPostFilteredPage()
     RS -> RS: setPostList()
     RS -> RS: createSearchResponse()
     RS -> UI: createSearchResponse()
-else "Invalido"
+else ContentType = Invalido
     RS -> RS: createSearchResponse()
     RS -> UI: createSearchResponse()
 end
