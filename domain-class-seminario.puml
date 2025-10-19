@@ -46,6 +46,7 @@ package entity {
         - List<User> downvoters
         - LocalDateTime createdAt
         - LocalDateTime updatedAt
+        - PageProfile PageProfile
         - Status status
     }
 
@@ -57,8 +58,8 @@ package entity {
         - String authorId
         - Page? page
         - String? imageId
-        - List<User> upvoters
-        - List<User> downvoters
+        - List<UserProfile> upvoters
+        - List<UserProfile> downvoters
         - Category category
         - LocalDateTime createdAt
         - LocalDateTime updatedAt
@@ -87,17 +88,17 @@ package entity {
         - List<Instrument> instruments
     }
 
-    class Page {
+    class PageProfile {
         - String id
         - String name
         - String portraitImage
         - String profileImage
         - String shortDescription
         - String longDescription
-        - User ownerId
+        - String ownerId
         - Status status
         - PageType pageType
-        - List<User> members
+        - List<UserProfile> members
     }
 
     Comment --> Post : postId
