@@ -1,0 +1,51 @@
+@startuml
+
+hide footbox
+
+actor User
+boundary "UI" as UI
+control "ResultService" as RS
+participant "UserRepository" as UR <<repository>>
+participant "UserProfileRepository" as UPR <<repository>>
+participant "PostRepository" as PTR <<repository>>
+participant "PageProfileRepository" as PPR <<repository>>
+participant "CatalogRepository" as CR <<repository>>
+entity "actual:Sesion" as S
+
+User -> UI : optionSearchContent()
+UI -> UI: showSearchViewmodel()
+User -> UI: takeText()
+User -> UI: takeStyles()
+User -> UI: takeInstrument()
+User -> UI: takePageType()
+User -> UI: selectContentType()
+UI -> UI: getSesion()
+UI -> S: getSesion()
+UI -> RS: searchContent()
+RS -> UR: authUser()
+RS -> CR: getContentById()
+RS -> RS: setEmptyLists()
+alt "Paginas"
+    RS -> PPR: getPageFilteredPage()
+    RS -> RS: setPageList()
+    RS -> RS: createSearchResponse()
+    RS -> UI: createSearchResponse()
+else "Usuarios"
+    RS -> UPR: getUserFilteredPage()
+    RS -> RS: setUserList()
+    RS -> RS: createSearchResponse()
+    RS -> UI: createSearchResponse()
+else "Post"
+    RS -> PPR: getPostFilteredPage()
+    RS -> RS: setPostList()
+    RS -> RS: createSearchResponse()
+    RS -> UI: createSearchResponse()
+else "Invalido"
+    RS -> RS: createSearchResponse()
+    RS -> UI: createSearchResponse()
+end
+RS -> UI: createPostResponse()
+UI -> UI: displayResults()
+RS -> RS: endUS()
+
+@enduml
