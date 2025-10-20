@@ -1,0 +1,73 @@
+@startuml
+actor User
+boundary "UI" as UI
+control "CommentService" as CS
+entity "new:Comment" as C
+entity "actual:Sesion" as S
+participant "UserRepository" as UR <<repository>>
+participant "UserProfileRepository" as UPR <<repository>>
+participant "PageProfileRepository" as PPR <<repository>>
+participant "PostRepository" as PTR <<repository>>
+participant "CommentRepository" as CR <<repository>>
+participant "ImageRepository" as IR <<repository>>
+entity "Comentary" as CE
+entity "Post" as PE
+entity "actual:Post" as AP
+entity "UserProfile" as UPE
+entity "author:UserProfile" as AUP
+entity "PageProfile" as PPE
+entity "actual:PageProfile" as APP
+
+User -> UI: onClickOnPost()
+UI -> UI: showPostDetail()
+User -> UI: onAddComment()
+UI -> UI: showNewCommentViewmodel()
+User -> UI: takeContent()
+UI -> UI: showProfiles()
+User -> UI: selectProfile()
+User -> UI: optionCreateComment()
+UI -> UI: getSesion()
+UI -> S: getSesion()
+UI -> CS: createPost()
+CS -> UR: authUser()
+CS -> PTR: getById()
+PTR -> PE: getById()
+CS -> CS: isActivePost()
+CS -> AP: getStatus()
+create C
+CS --> C : new()
+CS -> UPR: getById()
+UPR -> UPE: getById()
+CS -> CS: resolveType()
+alt type == USER
+    CS -> AUP: getId()
+    CS -> CS: equalsProfileId()
+    CS -> C: setPageProfileToNull()
+    CS -> C: setAuthor() 
+else type == PAGE
+    CS -> PPR: getById()
+    PPR -> PPE: getById()
+    CS -> APP: isMember()
+    CS -> C: setPageProfile()
+    CS -> C: setAuthor() 
+end
+CS -> C: setPostId()
+CS -> C: setContent()
+CS -> C: setUpvoters()
+CS -> C: setDownvoters()
+CS -> C: setCreatedAt()
+CS -> C: setUpdatedAt()
+CS -> C: setStatusActive()
+CS -> CS: isRepplyTo()
+CS -> CR: getById() 
+CR -> CE: getById()
+CS -> C: setReplyTo()
+CS -> CR: save()
+CS -> CS: createCommentResponse()
+CS -> UI: createCommentResponse()
+UI -> UI: displaySuscess()
+UI -> UI: navigatePostDetail()
+CS -> CS : endUS()
+
+hide footbox
+@enduml
