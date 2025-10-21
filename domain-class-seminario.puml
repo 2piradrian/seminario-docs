@@ -1,7 +1,7 @@
 @startuml entity-model
 left to right direction
-
-package entity {
+skinparam nodesep 50
+skinparam ranksep 50
 
     enum Role {
         USER
@@ -84,6 +84,8 @@ package entity {
         - String profileImage
         - String shortDescription
         - String longDescription
+        - Boolean isFollowing
+        - List<String> following
         - List<Style> styles
         - List<Instrument> instruments
     }
@@ -98,19 +100,20 @@ package entity {
         - String ownerId
         - Status status
         - PageType pageType
+        - Boolean isFollowing
         - List<UserProfile> members
     }
 
     Comment --> Post : postId
     Comment --> Comment : replyTo
-    Comment --> Status
+    Comment --> Status : status
     Comment --> User : authorId
     Comment --> User : upvoters
     Comment --> User : downvoters
     Post --> Category : category
     Post --> Status : status
     Post --> User : authorId
-    Post --> Page : pageId
+    Post --> PageProfile : pageId
     Post --> User : upvoters
     Post --> User : downvoters
     User --> Role : role
@@ -118,10 +121,11 @@ package entity {
     User --> UserProfile : userProfile
     UserProfile --> Style :  styles
     UserProfile --> Instrument :  instruments
-    Page --> User : members
-    Page --> User : owner
-    Page --> PageType : pageType
-    Page --> Status : status
+    PageProfile --> User : members
+    PageProfile --> User : owner
+    PageProfile --> PageType : pageType
+    PageProfile --> Status : status
+    UserProfile --> PageProfile : following
+    UserProfile --> UserProfile : following
 
-}
 @enduml
