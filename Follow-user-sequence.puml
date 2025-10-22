@@ -50,6 +50,7 @@ end
 FS -> UI: toggleFollowRes
 UI -> UI: updateIsFollowing()
 UI -> User: showFollowButtonState()
+FS -> FS: endUS()
 
 hide footbox
 @enduml

@@ -9,7 +9,7 @@ entity "actual:Sesion" as S
 entity "New:Post" as P
 
 User -> UI : optionCreatePost()
-UI -> UI: showNewPostViewmodel()
+UI -> UI: showNewPost()
 User -> UI: takeTitle()
 User -> UI: takeContent()
 UI -> UI: regexValidateFields()

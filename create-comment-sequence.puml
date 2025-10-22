@@ -21,7 +21,7 @@ entity "actual:PageProfile" as APP
 User -> UI: onClickOnPost()
 UI -> UI: showPostDetail()
 User -> UI: onAddComment()
-UI -> UI: showNewCommentViewmodel()
+UI -> UI: showNewComment()
 User -> UI: takeContent()
 UI -> UI: showProfiles()
 User -> UI: selectProfile()

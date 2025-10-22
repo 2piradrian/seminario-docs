@@ -13,7 +13,7 @@ participant "CatalogRepository" as CR <<repository>>
 entity "actual:Sesion" as S
 
 User -> UI : optionSearchContent()
-UI -> UI: showSearchViewmodel()
+UI -> UI: showSearch()
 User -> UI: takeText()
 User -> UI: takeStyles()
 User -> UI: takeInstrument()
