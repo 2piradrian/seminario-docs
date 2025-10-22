@@ -2,11 +2,11 @@
 actor User
 boundary "UI" as UI
 control "PostService" as C
+entity "New:Post" as P
 participant "UserRepository" as UR <<repository>>
 participant "PostRepository" as PTR <<repository>>
 participant "ImageRepository" as IR <<repository>>
 entity "actual:Sesion" as S
-entity "New:Post" as P
 
 User -> UI : optionCreatePost()
 UI -> UI: showNewPost()
