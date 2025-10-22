@@ -2,10 +2,14 @@
 actor User
 boundary "UI" as UI
 control "FollowService" as FS
+entity "actual:UserProfile" as AUP
+entity "actual:PageProfile" as APP
 entity "actual:Sesion" as S
 participant "UserRepository" as UR <<repository>>
 participant "UserProfileRepository" as UPR <<repository>>
 participant "PageProfileRepository" as PPR <<repository>>
+entity "UserProfile" as UP
+entity "PageProfile" as PP
 
 User -> UI: onClickOnFollowButton()
 UI -> UI: showFollowButtonState()
@@ -13,38 +17,23 @@ UI -> UI: getSesion()
 UI -> S: getSesion()
 UI -> FS: toggleFollowUser()
 FS -> UR: authUser()
-alt Follow (user not in followList)
-    alt type == USER
-        FS -> UPR: getById()
-        UPR -> UPR: getUserId()
-        FS -> FS: profileToFollow()
-        FS -> UPR: getFollowing()
-        UPR -> UPR: getContent()
-        FS -> FS: SetFollowing()
-    else type == PAGE
-        FS -> PPR: getById()
-        PPR -> PPR: getById()
-        FS -> FS: pageProfile()
-        FS -> PPR: getFollowing()
-        PPR -> PPR: getContent()
-        FS -> FS: SetFollowing()
-    end
-else Unfollow (user in followList)
-    alt type == USER
-        FS -> UPR: getById()
-        UPR -> UPR: getUserId()
-        FS -> FS: profileToUnfollow()
-        FS -> UPR: getFollowing()
-        UPR -> UPR: getContent()
-        FS -> FS: RemoveFollowing()
-    else type == PAGE
-        FS -> PPR: getById()
-        PPR -> PPR: getById()
-        FS -> FS: pageProfile()
-        FS -> PPR: getFollowing()
-        PPR -> PPR: getContent()
-        FS -> FS: RemoveFollowing()
-        end
+FS -> FS: resolveType()
+alt type == USER
+    FS -> UPR: getById()
+    UPR -> UP: getById()
+    FS -> AUP: getFollowing()
+    FS -> FS: isFolower()
+    FS -> FS: toggleFolow()
+    FS -> AUP: setFollowing()
+    FS -> UPR: update()
+else type == PAGE
+    FS -> PPR: getById()
+    PPR -> PP: getById()
+    FS -> APP: getFollowing()
+    FS -> FS: isFolower()
+    FS -> FS: toggleFolow()
+    FS -> APP: setFollowing()
+    FS -> PPR: update()
 end
 
 FS -> UI: toggleFollowRes
