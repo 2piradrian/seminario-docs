@@ -1,0 +1,55 @@
+@startuml
+actor User
+boundary "UI" as UI
+control "FollowService" as FS
+entity "actual:Sesion" as S
+participant "UserRepository" as UR <<repository>>
+participant "UserProfileRepository" as UPR <<repository>>
+participant "PageProfileRepository" as PPR <<repository>>
+
+User -> UI: onClickOnFollowButton()
+UI -> UI: showFollowButtonState()
+UI -> UI: getSesion() 
+UI -> S: getSesion()
+UI -> FS: toggleFollowUser()
+FS -> UR: authUser()
+alt Follow (user not in followList)
+    alt type == USER
+        FS -> UPR: getById()
+        UPR -> UPR: getUserId()
+        FS -> FS: profileToFollow()
+        FS -> UPR: getFollowing()
+        UPR -> UPR: getContent()
+        FS -> FS: SetFollowing()
+    else type == PAGE
+        FS -> PPR: getById()
+        PPR -> PPR: getById()
+        FS -> FS: pageProfile()
+        FS -> PPR: getFollowing()
+        PPR -> PPR: getContent()
+        FS -> FS: SetFollowing()
+    end
+else Unfollow (user in followList)
+    alt type == USER
+        FS -> UPR: getById()
+        UPR -> UPR: getUserId()
+        FS -> FS: profileToUnfollow()
+        FS -> UPR: getFollowing()
+        UPR -> UPR: getContent()
+        FS -> FS: RemoveFollowing()
+    else type == PAGE
+        FS -> PPR: getById()
+        PPR -> PPR: getById()
+        FS -> FS: pageProfile()
+        FS -> PPR: getFollowing()
+        PPR -> PPR: getContent()
+        FS -> FS: RemoveFollowing()
+        end
+end
+
+FS -> UI: toggleFollowRes
+UI -> UI: updateIsFollowing()
+UI -> User: showFollowButtonState()
+
+hide footbox
+@enduml
