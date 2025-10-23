@@ -1,0 +1,93 @@
+@startuml
+
+' Config 
+
+' skinparam linetype ortho
+
+' UI
+
+rectangle "WebUI" as WEBUI {
+    [UserLoginForm] as UL_UI <<subsystem>>
+    [UserRegisterForm] as UR_UI <<subsystem>>
+}
+
+' Gateway 
+
+rectangle "API Gateway" as GATE {
+    [WebAPIGateway] as WAG <<interal>>
+}
+
+' Microservices
+
+rectangle "Users" as U {
+    rectangle "Config" as C_U <<subsystem>> {
+        [JWTHelper] as JWT_U <<component>>
+        [PasswordEncoder] as PEC_U <<component>>
+    }
+    rectangle "Data" as DA_U <<subsystem>> {
+        [PostgresRepository] as POG_U <<repository>>
+        [UserRepository] as UR_U <<repository>>
+    }
+    rectangle "Domain" as DO_U <<subsystem>>{
+        [AuthDTO] as A_DTO_U <<DTO>>
+        [UserDTO] as U_DTO_U <<DTO>>
+    }
+    rectangle "Presentation" as PE_U <<subsystem>>{
+        [AuthService] as AS_U <<service>>
+        [UserService] as US_U <<service>>
+        [EmailService] as ES_U <<service>>
+        [AuthController] as AC_U <<controller>>
+        [UserController] as UC_U <<controller>>
+    }
+}
+
+database "users-db" as DB_U
+
+AC_U ..> AS_U
+AC_U ..> A_DTO_U
+
+UC_U ..> US_U
+UC_U ..> U_DTO_U
+
+US_U ..> AS_U
+US_U ..> UR_U
+US_U ..> U_DTO_U
+
+AS_U ..> UR_U
+AS_U ..> ES_U
+AS_U ..> JWT_U
+AS_U ..> PEC_U
+AS_U ..> A_DTO_U
+
+UR_U ..> POG_U
+
+POG_U ..> DB_U
+
+' interfaces
+
+interface "UserRestAPI" as API_U
+interface "UserProfileServices" as SER_UP
+interface "WebUIRestAPI" as API_WEB
+
+' interface relation
+
+U --() API_U
+U ..>() SER_UP
+
+GATE ..>() API_U
+GATE ..>() API_WEB
+
+WEBUI --() API_WEB
+
+
+' Layout
+
+WEBUI -[hidden]d-> GATE
+GATE -[hidden]l-> U
+
+API_U -[hidden]u-> U
+API_U -[hidden]l-> GATE
+API_WEB -[hidden]d-> WEBUI
+API_WEB -[hidden]d-> GATE
+
+@enduml
