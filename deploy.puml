@@ -1,0 +1,147 @@
+@startuml
+
+skinparam defaultTextAlignment center
+
+' Nodo del Cliente
+node "Client Browser" as CLIENT <<device>> {
+    artifact "WebUI Application" as WEBUI_APP
+}
+
+' Nodos de Infraestructura Central
+node "Load Balancer" as LB <<device>>
+
+' Nodo del API Gateway
+node "API Gateway Server" as GW_NODE <<server>> {
+    component "API Gateway" as GATEWAY <<service>>
+}
+
+' Nodo del Registry
+node "Registry Server" as REG_NODE <<server>> {
+    component "Service Registry" as REGISTRY <<service>>
+}
+
+' Nodo del Config
+node "Config Server" as CFG_NODE <<server>> {
+    component "Config Service" as CONFIG <<service>>
+}
+
+' Microservicios - Fila Superior
+node "Users Service Server" as USERS_NODE <<server>> {
+    component "Users Service" as USERS <<service>>
+    database "Users DB" as USERS_DB {
+    }
+}
+
+node "Catalog Service Server" as CAT_NODE <<server>> {
+    component "Catalog Service" as CATALOG <<service>>
+    database "Catalog DB" as CATALOG_DB {
+    }
+}
+
+node "Events Service Server" as EVT_NODE <<server>> {
+    component "Events Service" as EVENTS <<service>>
+    database "Events DB" as EVENTS_DB {
+    }
+}
+
+' Microservicios - Fila Derecha
+node "Images Service Server" as IMG_NODE <<server>> {
+    component "Images Service" as IMAGES <<service>>
+    database "Images Bucket" as IMAGES_BUCKET {
+    }
+}
+
+node "PageProfiles Service Server" as PP_NODE <<server>> {
+    component "PageProfiles Service" as PAGEPROFILES <<service>>
+    database "PageProfiles DB" as PP_DB {
+    }
+}
+
+' Microservicios - Fila Inferior
+node "Posts Service Server" as POST_NODE <<server>> {
+    component "Posts Service" as POSTS <<service>>
+    database "Posts DB" as POSTS_DB {
+    }
+}
+
+node "Results Service Server" as RES_NODE <<server>> {
+    component "Results Service" as RESULTS <<service>>
+}
+
+node "UserProfiles Service Server" as UP_NODE <<server>> {
+    database "UserProfiles DB" as UP_DB {
+    }
+    component "UserProfiles Service" as USERPROFILES <<service>>
+}
+
+' Conexiones del Cliente
+CLIENT -- LB 
+
+' Load Balancer al Gateway
+LB -- GW_NODE
+
+' Gateway a microservicios
+GW_NODE -- USERS_NODE 
+GW_NODE -- CAT_NODE
+GW_NODE -- EVT_NODE 
+GW_NODE -- IMG_NODE 
+GW_NODE -- PP_NODE 
+GW_NODE -- POST_NODE
+GW_NODE -- RES_NODE
+GW_NODE -- UP_NODE
+GW_NODE -- CFG_NODE
+GW_NODE -- REG_NODE
+
+' Microservicios a bases de datos
+USERS -- USERS_DB 
+CATALOG -- CATALOG_DB 
+EVENTS -- EVENTS_DB 
+IMAGES -- IMAGES_BUCKET
+PAGEPROFILES -- PP_DB 
+POSTS -- POSTS_DB 
+USERPROFILES -- UP_DB 
+
+' Layout - Organizando alrededor del centro (Gateway, Registry, Config)
+
+' Cliente arriba
+CLIENT -[hidden]down-> LB
+LB -[hidden]down-> GW_NODE
+
+' Centro: Gateway, Registry, Config
+GW_NODE -[hidden]right-> REG_NODE
+REG_NODE -[hidden]right-> CFG_NODE
+GW_NODE -[hidden]right-> RES_NODE
+
+' Fila superior: Users, Catalog, Events
+USERS_NODE -[hidden]down-> GW_NODE
+CAT_NODE -[hidden]down-> REG_NODE
+EVT_NODE -[hidden]down-> CFG_NODE
+
+USERS_NODE -[hidden]right-> CAT_NODE
+CAT_NODE -[hidden]right-> EVT_NODE
+
+' Columna derecha: Events -> Images -> PageProfiles
+EVT_NODE -[hidden]down-> IMG_NODE
+IMG_NODE -[hidden]down-> PP_NODE
+
+' Fila inferior: Posts, Results, UserProfiles
+GW_NODE -[hidden]down-> POST_NODE
+REG_NODE -[hidden]down-> RES_NODE
+CFG_NODE -[hidden]down-> UP_NODE
+
+POST_NODE -[hidden]right-> RES_NODE
+RES_NODE -[hidden]right-> UP_NODE
+
+' Alinear PageProfiles con UserProfiles
+PP_NODE -[hidden]down-> UP_NODE
+
+' Bases de datos alineadas bajo sus servicios
+USERS_NODE -[hidden]down-> USERS_DB
+CAT_NODE -[hidden]down-> CATALOG_DB
+EVT_NODE -[hidden]down-> EVENTS_DB
+IMG_NODE -[hidden]down-> IMAGES_BUCKET
+PP_NODE -[hidden]down-> PP_DB
+POST_NODE -[hidden]down-> POSTS_DB
+UP_NODE -[hidden]down-> UP_DB
+
+@enduml
