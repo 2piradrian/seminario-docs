@@ -1,0 +1,19 @@
+@startuml
+title State Machine - User
+left to right direction
+
+[*] --> Inactive : register()
+
+Inactive --> Active : verifyEmail()
+Inactive --> Inactive : resendVerifyEmail()
+
+Active --> Banned : ban()
+Active --> Deleted : delete()
+
+Banned --> Active : reactivate()
+Banned --> Deleted : delete()
+
+Deleted --> [*] 
+
+@enduml
+

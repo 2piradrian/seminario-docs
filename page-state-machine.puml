@@ -1,0 +1,16 @@
+@startuml
+title State Machine - Page
+left to right direction
+
+
+[*] --> Active : register()
+
+Active --> Banned : ban()
+Active --> Deleted : delete()
+
+Banned --> Active : reactivate()
+Banned --> Deleted : delete()
+
+Deleted --> [*]
+
+@enduml
