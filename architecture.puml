@@ -6,88 +6,280 @@
 
 ' UI
 
-rectangle "WebUI" as WEBUI {
-    [UserLoginForm] as UL_UI <<subsystem>>
-    [UserRegisterForm] as UR_UI <<subsystem>>
+rectangle "WebUI" as WEBUI <<UI>> {
+    [UserWebPresentation] as UL_UI <<subsystem>>
+    [CatalogWebPresentation] as CL_UI <<subsystem>>
+    [EventWebPresentation] as EL_UI <<subsystem>>
+    [PageProfileWebPresentation] as PPL_UI <<subsystem>>
+    [PostWebPresentation] as POL_UI <<subsystem>>
+    [SearchWebPresentation] as REL_UI <<subsystem>>
+    [UserProfileWebPresentation] as UPL_UI <<subsystem>>
 }
 
 ' Gateway 
 
-rectangle "API Gateway" as GATE {
+rectangle "API Gateway" as GATE <<microservice>> {
     [WebAPIGateway] as WAG <<interal>>
 }
 
 ' Microservices
 
-rectangle "Users" as U {
-    rectangle "Config" as C_U <<subsystem>> {
-        [JWTHelper] as JWT_U <<component>>
-        [PasswordEncoder] as PEC_U <<component>>
-    }
-    rectangle "Data" as DA_U <<subsystem>> {
-        [PostgresRepository] as POG_U <<repository>>
-        [UserRepository] as UR_U <<repository>>
-    }
-    rectangle "Domain" as DO_U <<subsystem>>{
-        [AuthDTO] as A_DTO_U <<DTO>>
-        [UserDTO] as U_DTO_U <<DTO>>
-    }
-    rectangle "Presentation" as PE_U <<subsystem>>{
-        [AuthService] as AS_U <<service>>
-        [UserService] as US_U <<service>>
-        [EmailService] as ES_U <<service>>
-        [AuthController] as AC_U <<controller>>
-        [UserController] as UC_U <<controller>>
-    }
+rectangle "Users" as U <<microservice>> {
+    [Config] as C_U <<component>>
+    [Data] as DA_U <<component>>
+    [Domain] as DO_U <<component>>
+    [Presentation] as PE_U <<component>>
 }
 
 database "users-db" as DB_U
 
-AC_U ..> AS_U
-AC_U ..> A_DTO_U
+PE_U ..> C_U
+PE_U ..> DO_U
+DO_U ..> DA_U
+DA_U ..> DO_U
+DA_U ..> DB_U
 
-UC_U ..> US_U
-UC_U ..> U_DTO_U
 
-US_U ..> AS_U
-US_U ..> UR_U
-US_U ..> U_DTO_U
+rectangle "Catalog" as C <<microservice>> {
+    [Config] as C_C <<subsystem>>
+    [Data] as DA_C <<subsystem>>
+    [Domain] as DO_C <<subsystem>>
+    [Presentation] as PE_C <<subsystem>>
+}
 
-AS_U ..> UR_U
-AS_U ..> ES_U
-AS_U ..> JWT_U
-AS_U ..> PEC_U
-AS_U ..> A_DTO_U
+database "catalog-db" as DB_C
 
-UR_U ..> POG_U
 
-POG_U ..> DB_U
+PE_C ..> C_C
+PE_C ..> DO_C 
+DO_C ..> DA_C
+DA_C ..> DO_C
+DA_C ..> DB_C
+
+rectangle "Config" as CF <<microservice>> {
+    [ConfigApplication] as C_CF <<component>>
+    [AppConfig] as A_CF <<component>>
+}
+
+C_CF ..> A_CF
+
+rectangle "Events" as E <<microservice>> {
+    [Config] as C_E <<subsystem>>
+    [Data] as DA_E <<subsystem>>
+    [Domain] as DO_E <<subsystem>>
+    [Presentation] as PE_E <<subsystem>>
+}
+
+database "events-db" as DB_E
+
+PE_E ..> C_E
+PE_E ..> DO_E 
+DO_E ..> DA_E
+DA_E ..> DO_E
+DA_E ..> DB_E
+
+rectangle "Images" as I <<microservice>> {
+    [Config] as C_I <<subsystem>>
+    [Data] as DA_I <<subsystem>>
+    [Domain] as DO_I <<subsystem>>
+    [Presentation] as PE_I <<subsystem>>
+}
+
+database "images-bucket" as BK_I
+
+PE_I ..> C_I
+PE_I ..> DO_I
+DO_I ..> DA_I
+DA_I ..> DO_I
+DA_I ..> BK_I
+
+rectangle "PageProfiles" as PP <<microservice>> {
+    [Config] as C_PP <<subsystem>>
+    [Data] as DA_PP <<subsystem>>
+    [Domain] as DO_PP <<subsystem>>
+    [Presentation] as PE_PP <<subsystem>>
+}
+
+database "page-profiles-db" as DB_PP
+
+
+PE_PP  ..> C_PP  
+PE_PP ..> DO_PP  
+DO_PP ..> DA_PP 
+DA_PP ..> DO_PP 
+DA_PP ..> DB_PP
+
+rectangle "Posts" as PO <<microservice>> {
+    [Config] as C_PO <<subsystem>>
+    [Data] as DA_PO <<subsystem>>
+    [Domain] as DO_PO <<subsystem>>
+    [Presentation] as PE_PO <<subsystem>>
+}
+
+database "posts-db" as DB_PO
+
+
+PE_PO  ..> C_PO  
+PE_PO ..> DO_PO  
+DO_PO ..> DA_PO 
+DA_PO ..> DO_PO 
+DA_PO ..> DB_PO
+
+rectangle "Registry" as R <<microservice>> {
+    [RegistryApplication] as R_R <<component>>
+}
+
+rectangle "Results" as RE <<microservice>> {
+    [Config] as C_RE <<subsystem>>
+    [Data] as DA_RE <<subsystem>>
+    [Domain] as DO_RE <<subsystem>>
+    [Presentation] as PE_RE <<subsystem>>
+}
+
+PE_RE  ..> C_RE 
+PE_RE ..> DO_RE
+DO_RE ..> DA_RE
+DA_RE ..> DO_RE
+
+rectangle "UserProfiles" as UP <<microservice>> {
+    [Config] as C_UP <<subsystem>>
+    [Data] as DA_UP <<subsystem>>
+    [Domain] as DO_UP <<subsystem>>
+    [Presentation] as PE_UP <<subsystem>>
+}
+
+database "user-profiles-db" as DB_UP
+
+
+PE_UP  ..> C_UP 
+PE_UP ..> DO_UP  
+DO_UP ..> DA_UP 
+DA_UP ..> DO_UP 
+DA_UP ..> DB_UP
 
 ' interfaces
 
-interface "UserRestAPI" as API_U
-interface "UserProfileServices" as SER_UP
-interface "WebUIRestAPI" as API_WEB
+interface "ConfigServices" as SER_CF
+interface "RegistryServices" as SER_R
 
+interface "UserRestAPI" as API_U
+interface "WebUIRestAPI" as API_WEB
+interface "UserRestAPI" as API_U
+interface "CatalogRestAPI" as API_C
+interface "EventsRestAPI" as API_E
+interface "ImagesRestAPI" as API_I
+interface "PageProfilesRestAPI" as API_PP
+interface "PostsRestAPI" as API_PO
+interface "ResultsRestAPI" as API_RE
+interface "UserProfilesRestAPI" as API_UP
+
+
+interface "ConfigServicesr" as SER_CFr
+interface "RegistryServicesr" as SER_Rr
+interface "UserRestAPIr" as API_Ur
+interface "WebUIRestAPIr" as API_WEBr
+interface "UserRestAPIr" as API_Ur
+interface "CatalogRestAPIr" as API_Cr
+interface "EventsRestAPIr" as API_Er
+interface "ImagesRestAPIr" as API_Ir
+interface "PageProfilesRestAPIr" as API_PPr
+interface "PostsRestAPIr" as API_POr
+interface "ResultsRestAPIr" as API_REr
+interface "UserProfilesRestAPIr" as API_UPr
+
+interface "ConfigServicesReq" as SER_CFr
+interface "RegistryServicesReq" as SER_Rr
+interface "UserRestAPIReq" as API_Ur
+interface "WebUIRestAPIReq" as API_WEBr
+interface "UserRestAPIReq" as API_Ur
+interface "CatalogRestAPIReq" as API_Cr
+interface "EventsRestAPIReq" as API_Er
+interface "ImagesRestAPIReq" as API_Ir
+interface "PageProfilesRestAPIReq" as API_PPr
+interface "PostsRestAPIReq" as API_POr
+interface "ResultsRestAPIReq" as API_REr
+interface "UserProfilesRestAPIReq" as API_UPr
 ' interface relation
 
 U --() API_U
-U ..>() SER_UP
 
-GATE ..>() API_U
-GATE ..>() API_WEB
+C --() API_C
+
+E --() API_E
+
+I --() API_I
+
+PP --() API_PP
+
+PO --() API_PO
+
+RE --() API_RE
+
+UP --() API_UP
+
+CF --() SER_CF
+
+R --() SER_R
+
+GATE ..>() API_Ur
+GATE ..>() API_Cr
+GATE ..>() API_Er
+GATE ..>() API_Ir
+GATE ..>() API_PPr
+GATE ..>() API_POr
+GATE ..>() API_REr
+GATE ..>() API_UPr
+GATE ..>() API_WEBr
+GATE ..>() SER_CFr
+GATE ..>() SER_Rr
 
 WEBUI --() API_WEB
 
 
 ' Layout
+' WebUI en la parte superior
+WEBUI -[hidden]down-> U
+WEBUI -[hidden]down-> C
+WEBUI -[hidden]down-> E
+WEBUI -[hidden]right-> API_WEB
 
-WEBUI -[hidden]d-> GATE
-GATE -[hidden]l-> U
+' Fila superior: Users, Catalog, Events (izquierda a derecha)
+U -[hidden]right-> C
+C -[hidden]right-> E
 
-API_U -[hidden]u-> U
-API_U -[hidden]l-> GATE
-API_WEB -[hidden]d-> WEBUI
-API_WEB -[hidden]d-> GATE
+' Centro: Gateway, Registry, Config
+U -[hidden]down-> GATE
+API_U -[hidden]left-> U
+C -[hidden]down-> R
+E -[hidden]down-> CF
+
+GATE -[hidden]right-> R
+R -[hidden]right-> CF
+
+' Columna derecha: Events -> Images -> PageProfiles
+E -[hidden]down-> I
+I -[hidden]down-> PP
+
+' Fila inferior: Posts, Results, UserProfiles (izquierda a derecha)
+GATE -[hidden]down-> PO
+R -[hidden]down-> RE
+CF -[hidden]down-> UP
+
+PO -[hidden]right-> RE
+RE -[hidden]right-> UP
+
+' Columna izquierda: Users -> Posts
+U -[hidden]down-> PO
+
+' Alinear PageProfiles con UserProfiles
+PP -[hidden]down-> UP
+
+' Bases de datos alineadas con sus servicios
+DB_U -[hidden]down-> U
+DB_C -[hidden]down-> C
+DB_E -[hidden]down-> E
+DB_PP -[hidden]down-> PP
+DB_PO -[hidden]down-> PO
+DB_UP -[hidden]down-> UP
 
 @enduml
