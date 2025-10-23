@@ -8,7 +8,6 @@ left to right direction
 Active --> Banned : ban()
 Active --> Deleted : delete()
 
-Banned --> Active : reactivate()
 Banned --> Deleted : delete()
 
 Deleted --> [*]
