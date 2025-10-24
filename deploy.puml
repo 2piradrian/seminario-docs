@@ -7,9 +7,6 @@ node "Client Browser" as CLIENT <<device>> {
     artifact "WebUI Application" as WEBUI_APP
 }
 
-' Nodos de Infraestructura Central
-node "Load Balancer" as LB <<device>>
-
 ' Nodo del API Gateway
 node "API Gateway Server" as GW_NODE <<server>> {
     component "API Gateway" as GATEWAY <<service>>
@@ -75,10 +72,7 @@ node "UserProfiles Service Server" as UP_NODE <<server>> {
 }
 
 ' Conexiones del Cliente
-CLIENT -- LB 
-
-' Load Balancer al Gateway
-LB -- GW_NODE
+CLIENT -- GW_NODE
 
 ' Gateway a microservicios
 GW_NODE -- USERS_NODE 
@@ -104,8 +98,7 @@ USERPROFILES -- UP_DB
 ' Layout - Organizando alrededor del centro (Gateway, Registry, Config)
 
 ' Cliente arriba
-CLIENT -[hidden]down-> LB
-LB -[hidden]down-> GW_NODE
+CLIENT -[hidden]down-> GW_NODE
 
 ' Centro: Gateway, Registry, Config
 GW_NODE -[hidden]right-> REG_NODE
