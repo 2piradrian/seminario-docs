@@ -1,0 +1,55 @@
+@startuml
+actor User
+boundary "UI" as UI
+control "ReviewService" as RS
+entity "new:Review" as R
+entity "actual:Sesion" as S
+participant "UserRepository" as UR <<repository>>
+participant "UserProfileRepository" as UPR <<repository>>
+participant "ReviewRepository" as RR <<repository>>
+participant "UserProfile" as UPE
+entity "author:UserProfile" as AUP
+entity "reviewed:UserProfile" as RUP
+
+User -> UI: onClickOnUserProfile()
+UI -> UI: showUserProfileDetail()
+User -> UI: onAddReview()
+UI -> UI: showNewReview()
+User -> UI: takeContent()
+UI -> UI: showProfiles()
+User -> UI: selectProfile()
+User -> UI: optionCreateReview()
+UI -> UI: getSesion()
+UI -> S: getSesion()
+UI -> RS: createReview()
+
+RS -> UR: authUser()
+RS -> UPR: getById(reviewerUserId)
+UPR -> AUP: getById()
+RS -> UPR: getById(reviewedUserId)
+UPR -> RUP: getById()
+
+RS -> RS: validateProfiles()
+RS -> RS: isActiveReviewer()
+RS -> RS: isActiveReviewed()
+
+create R
+RS --> R: new()
+RS -> R: setAuthor(AUP)
+RS -> R: setReviewedUser(RUP)
+RS -> R: setContent()
+RS -> R: setRating()
+RS -> R: setCreatedAt()
+RS -> R: setUpdatedAt()
+RS -> R: setStatusActive()
+
+RS -> RR: save(R)
+RS -> RS: createReviewResponse()
+RS -> UI: createReviewResponse()
+UI -> UI: displaySuccess()
+UI -> UI: navigateUserProfileDetail()
+
+RS -> RS: endUS()
+
+hide footbox
+@enduml
