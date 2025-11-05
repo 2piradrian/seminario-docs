@@ -1,0 +1,15 @@
+@startuml
+title State Machine - Review
+left to right direction
+
+
+[*] --> Active : create()
+
+Active --> Banned : ban()
+Active --> Deleted : delete()
+
+Banned --> Deleted : delete()
+
+Deleted --> [*]
+
+@enduml

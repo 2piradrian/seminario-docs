@@ -104,6 +104,34 @@ skinparam ranksep 50
         - List<UserProfile> members
     }
 
+    class Event {
+        - String id
+        - String title
+        - String content
+        - Integer views
+        - String authorId
+        - Page? page
+        - String? imageId
+        - LocalDateTime dateInit
+        - LocalDateTime dateEnd
+        - LocalDateTime createdAt
+        - LocalDateTime updatedAt
+        - Status status
+        - List<String> assists
+
+    }
+
+    class Review {
+        - String id
+        - String reviewedId
+        - UserProfile reviewerUser
+        - String review
+        - Float rating
+        - LocalDateTime createdAt
+        - LocalDateTime updatedAt
+        - Status status  
+    }
+
     Comment --> Post : postId
     Comment --> Comment : replyTo
     Comment --> Status : status
@@ -127,5 +155,12 @@ skinparam ranksep 50
     PageProfile --> Status : status
     UserProfile --> PageProfile : following
     UserProfile --> UserProfile : following
+    Event --> User : authorId
+    Event --> PageProfile : pageId
+    Event --> Status : status
+    Event --> UserProfile : assists
+    Review --> UserProfile : reviewerUser
+    Review --> Status : status
+    Review --> UserProfile : reviewedId (if user)
 
 @enduml

@@ -1,0 +1,50 @@
+@startuml
+actor User
+boundary "UI" as UI
+control "EventService" as C
+entity "New:Event" as E
+participant "UserRepository" as UR <<repository>>
+participant "EventRepository" as PTR <<repository>>
+participant "ImageRepository" as IR <<repository>>
+entity "actual:Sesion" as S
+
+User -> UI : optionCreateEvent()
+UI -> UI: showNewEvent()
+User -> UI: takeTitle()
+User -> UI: takeContent()
+UI -> UI: regexValidateFields()
+User -> UI: takeImage()
+UI -> UI: covertImageToBase64()
+User -> UI: takeDateInit()
+User -> UI: takeDateEnd()
+UI -> UI: validateDateInitBeforeDateEnd()
+UI -> UI: getSesion()
+UI -> S: getSesion()
+UI -> C: createEvent()
+C -> UR: authUser() 
+create E
+C --> E : new()
+C -> C: isPageOrProfile()
+C -> E: setPage()
+C -> E: setAuthor()
+C -> C: hasImage()
+C -> IR: upload() 
+C -> E: setImage()
+C -> E: setTitle()
+C -> E: setContent()
+C -> E: setStatus()
+C -> E: setViews()
+C -> E: setDateInit()
+C -> E: setDateEnd()
+C -> C : getEventDateCreation()
+C -> E: setCreatedAt()
+C -> E: setUpdatedAt()
+C -> PTR: save()
+C -> C: createEventResponse()
+C -> UI: createEventResponse()
+UI -> UI: displaySuscess()
+UI -> UI: navigateEventDetail()
+C -> C : endUS()
+
+hide footbox
+@enduml
