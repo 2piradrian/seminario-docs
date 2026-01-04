@@ -1,0 +1,26 @@
+@startuml
+title State Machine - Event
+left to right direction
+
+[*] --> UPCOMING : create()
+
+UPCOMING --> IN_PROGRESS : processExpirationBatch()\n[dateInit <= now]
+
+UPCOMING --> CANCELED : cancel()
+
+UPCOMING --> DELETED : delete()
+
+IN_PROGRESS --> ENDED : processExpirationBatch()\n[now >= dateEnd]
+
+IN_PROGRESS --> CANCELED : cancel()
+
+IN_PROGRESS --> DELETED : delete()
+
+ENDED --> DELETED : delete()
+
+CANCELED --> DELETED : delete()
+
+DELETED --> [*]
+
+
+@enduml

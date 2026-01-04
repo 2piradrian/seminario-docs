@@ -46,7 +46,7 @@ skinparam ranksep 50
         - List<User> downvoters
         - LocalDateTime createdAt
         - LocalDateTime updatedAt
-        - PageProfile PageProfile
+        - PageProfile pageProfile
         - Status status
     }
 
@@ -119,6 +119,17 @@ skinparam ranksep 50
         - Status status
         - List<String> assists
 
+        + calculateAssistsQuantity()
+        + setIsAssisting()
+      
+    }
+
+     enum EventStatus {
+        UPCOMING
+        IN_PROGRESS
+        ENDED
+        CANCELED
+        DELETED
     }
 
     class Review {
@@ -132,35 +143,97 @@ skinparam ranksep 50
         - Status status  
     }
 
+    class Chat {
+        - String id
+        - String lastMessage
+        - LocalDateTime createdAt
+        - Boolean isMine
+        - User user
+    }
+
+    class ChatMessage {
+        - String id
+        - User sender
+        - User receiver
+        - String content
+        - LocalDateTime createdAt
+    }
+
+    class Follow {
+        - String id
+        - String followedId
+        - String followerId
+    }
+
+    class Notification {
+        - String id
+        - String targetId
+        - String sourceId
+        - User carriedOutBy
+        - NotificationContent content
+        - LocalDateTime createdAt
+        - LocalDateTime updatedAt
+    }
+
+    enum NotificationContent {
+        COMMENT
+        UPVOTE
+        PAGE_INVITATION
+        DOWNVOTE
+        ASSIST
+        FOLLOW
+
+        + fromString(): String
+    }
+
     Comment --> Post : postId
     Comment --> Comment : replyTo
     Comment --> Status : status
     Comment --> User : authorId
     Comment --> User : upvoters
     Comment --> User : downvoters
+    Comment --> PageProfile : pageProfile
+
     Post --> Category : category
     Post --> Status : status
     Post --> User : authorId
     Post --> PageProfile : pageId
     Post --> User : upvoters
     Post --> User : downvoters
+
     User --> Role : role
     User --> Status : status
     User --> UserProfile : userProfile
+
     UserProfile --> Style :  styles
     UserProfile --> Instrument :  instruments
+    UserProfile --> PageProfile : following
+    UserProfile --> UserProfile : following
+
     PageProfile --> User : members
     PageProfile --> User : owner
     PageProfile --> PageType : pageType
     PageProfile --> Status : status
-    UserProfile --> PageProfile : following
-    UserProfile --> UserProfile : following
+
     Event --> User : authorId
     Event --> PageProfile : pageId
-    Event --> Status : status
+    Event --> EventStatus : status
     Event --> UserProfile : assists
+    
     Review --> UserProfile : reviewerUser
+    Review --> UserProfile : reviewed
     Review --> Status : status
     Review --> UserProfile : reviewedId (if user)
 
+    Chat "1" --> "*" ChatMessage
+    Chat --> User
+
+    ChatMessage --> User : sender
+    ChatMessage --> User : receiver
+
+    Follow --> UserProfile : follower
+    Follow --> UserProfile : followed
+
+    Notification --> User : carriedOutBy
+    Notification --> NotificationContent : content
 @enduml

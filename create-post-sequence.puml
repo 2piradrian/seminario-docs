@@ -12,6 +12,7 @@ User -> UI : optionCreatePost()
 UI -> UI: showNewPost()
 User -> UI: takeTitle()
 User -> UI: takeContent()
+User -> UI: takePostType()
 UI -> UI: regexValidateFields()
 User -> UI: takeImage()
 UI -> UI: covertImageToBase64()
@@ -21,21 +22,38 @@ UI -> C: createPost()
 C -> UR: authUser() 
 create P
 C --> P : new()
-C -> C: isPageOrProfile()
-C -> P: setPage()
+
+C -> C: resolveProfileType(profileId)
+alt Perfil USER
+    C -> P: setPageProfile(null)
+else Perfil PAGE
+    C -> C: validatePageMembership()
+    C -> P: setPageProfile(page)
+end
+
+alt Tiene imagen
+    C -> IR: upload(image)
+    C -> P: setImageId()
+end
+
+C -> CR: getByPostTypeId(postTypeId)
+alt PostType no existe
+    C -> C: throw POSTTYPE_NOT_FOUND
+else PostType válido
+    C -> P: setPostType()
+end
+
+C -> P: setId()
 C -> P: setAuthor()
-C -> C: hasImage()
-C -> IR: upload() 
-C -> P: setImage()
 C -> P: setTitle()
 C -> P: setContent()
-C -> P: setStatus()
-C -> P: setViews()
-C -> P: setUpVoters()
-C -> P: setDownVoters()
-C -> C : getPostDate()
+C -> P: setStatus(ACTIVE)
+C -> P: setViews(0)
+C -> P: setUpVoters([])
+C -> P: setDownVoters([])
 C -> P: setCreatedAt()
 C -> P: setUpdatedAt()
+
 C -> PTR: save()
 C -> C: createPostResponse()
 C -> UI: createPostResponse()
