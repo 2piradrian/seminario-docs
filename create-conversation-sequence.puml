@@ -1,0 +1,61 @@
+@startuml
+
+actor User
+boundary "UI" as UI
+control "ChatService" as CS
+entity "new:ChatMessage" as CM
+entity "actual:Session" as S
+
+participant "UserRepository" as UR <<repository>>
+participant "ChatMessageRepository" as CMR <<repository>>
+
+entity "sender:User" as SU
+entity "receiver:User" as RU
+entity "new:ErrorHandler" as EH
+
+User -> UI: onClickStartConversation()
+UI -> UI: showNewConversation()
+User -> UI: writeMessage()
+User -> UI: confirmSend()
+
+UI -> UI: getSession()
+UI -> S: getSession()
+
+UI -> CS: save(ChatMessage)
+
+CS -> UR: auth(token)
+UR --> SU: authenticatedUser
+
+alt user unauthorized
+    create EH
+    CS --> EH: new(ErrorType.UNAUTHORIZED)
+    CS -> CS: throw EH
+else user authorized
+    CS -> UR: getById(receiverId)
+    UR --> RU: receiverUser
+
+    alt invalid receiver
+        create EH
+        CS --> EH: new(ErrorType.INVALID_RECEIVER)
+        CS -> CS: throw EH
+    else valid receiver
+        CS -> CS: generatePrefixedUUID()
+        create CM
+        CS --> CM: new()
+        CS -> CM: setId()
+        CS -> CM: setSender()
+        CS -> CM: setReceiver()
+        CS -> CM: setContent()
+        CS -> CM: setCreatedAt()
+
+        CS -> CMR: save(CM)
+        CMR --> CS: ChatMessage saved
+
+        CS -> CS: createChatResponse()
+        CS -> UI: createChatResponse()
+        UI -> UI: showConversation()
+    end
+end
+
+hide footbox
+@enduml
